@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Unterrainer Informatik OG Team</authors>
+    <owners>Public Domain</owners>
+    <licenseUrl>http://unlicense.org</licenseUrl>
+	<iconUrl>https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/icon.png</iconUrl>
+    <projectUrl>https://github.com/UnterrainerInformatik/BloomEffectRenderer</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+		If you want to add a nice bloom-effect to your game, this library will help you.
+		It's a portable library, so it will work with all MG flavors and it is pretty simple to use. Just create a BloomEffectRenderer in your game, hook it up (Initialize and UnloadContent) and tell it to render the effect at the appropriate point in your draw-method.
+		Pass it a RenderTarget (source) where you've drawn all your stuff in, and a second one (target) where the output will be rendered to.
+		If you pass 'null' as the target RenderTarget then it will draw directly to the backbuffer.
+	</description>
+    <summary>
+      This is an extension repository for MonoGame. It uses your local MG installation and provides an easy way to render a bloom-post-process-effect from and to any RenderTarget you like.
+    </summary>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <language>en-US</language>
+    <tags>bloom post process effect pipeline monogame rendertarget render gaussian blur extract combine shader hlsl</tags>
+  </metadata>
+</package>
