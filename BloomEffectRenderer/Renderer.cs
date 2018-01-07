@@ -29,7 +29,6 @@ using System;
 using BloomEffectRenderer.Effects;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BloomEffectRenderer
@@ -64,17 +63,39 @@ namespace BloomEffectRenderer
                 preferredDepthFormat: DepthFormat.None);
         }
 
-        public delegate void DebugDelegate(RenderTarget2D currentTarget, RenderPhase phase);
+        /// <summary>
+        ///     A delegate you may use if you want to render the individual steps of this pipeline in order to debug.
+        /// </summary>
+        /// <param name="name">The name of the render-run.</param>
+        /// <param name="currentTarget">
+        ///     The current <see cref="RenderTarget2D" /> that's just been used and currently holds the
+        ///     most recent step in this pipeline-run.
+        /// </param>
+        /// <param name="phase">The <see cref="RenderPhase" /> that has just been run.</param>
+        public delegate void DebugDelegate(string name, RenderTarget2D currentTarget, RenderPhase phase);
 
-        public void Render(GraphicsDevice gd, SpriteBatch sb, string name, Texture2D irt, RenderTarget2D ort,
-            Settings s, DebugDelegate debugDelegate = null)
+        /// <summary>
+        ///     Renders the bloom-effect pipe.
+        /// </summary>
+        /// <param name="gd">The <see cref="GraphicsDevice" />.</param>
+        /// <param name="sb">The <see cref="SpriteBatch" />.</param>
+        /// <param name="name">The name of the render-run for better identification later on or when debugging.</param>
+        /// <param name="irt">The input-<see cref="RenderTarget2D" />.</param>
+        /// <param name="ort">The output-<see cref="RenderTarget2D" />.</param>
+        /// <param name="s">The bloom-<see cref="Settings" />.</param>
+        /// <param name="debugDelegate">
+        ///     The debug delegate to use (gets called on every individual <see cref="RenderPhase" /> to
+        ///     enable debug-output outside of this class).
+        /// </param>
+        public void Render(GraphicsDevice gd, SpriteBatch sb, string name, Texture2D irt, RenderTarget2D ort, Settings s,
+            DebugDelegate debugDelegate = null)
         {
             Clear(gd);
             // Pass 1: draw the scene into render-target 1, using a
             // shader that extracts only the brightest parts of the image.
             ExtractEffect.Parameters["BloomThreshold"].SetValue((float) s.BloomThreshold.Value);
             DrawFullscreenQuad(gd, sb, irt, BloomRenderTarget1, ExtractEffect);
-            debugDelegate?.Invoke(BloomRenderTarget1, RenderPhase.EXTRACT);
+            debugDelegate?.Invoke(name, BloomRenderTarget1, RenderPhase.EXTRACT);
 
             // Pass 2: draw from render-target 1 into render-target 2,
             // using a shader to apply a horizontal Gaussian blur filter.
@@ -87,7 +108,7 @@ namespace BloomEffectRenderer
                 GaussianBlurEffect,
                 null,
                 SamplerState.AnisotropicClamp);
-            debugDelegate?.Invoke(BloomRenderTarget2, RenderPhase.BLUR_HORIZONTAL);
+            debugDelegate?.Invoke(name, BloomRenderTarget2, RenderPhase.BLUR_HORIZONTAL);
 
             // Pass 3: draw from render-target 2 back into render-target 1,
             // using a shader to apply a vertical Gaussian blur filter.
@@ -100,7 +121,7 @@ namespace BloomEffectRenderer
                 GaussianBlurEffect,
                 null,
                 SamplerState.AnisotropicClamp);
-            debugDelegate?.Invoke(BloomRenderTarget1, RenderPhase.BLUR_VERTICAL);
+            debugDelegate?.Invoke(name, BloomRenderTarget1, RenderPhase.BLUR_VERTICAL);
 
             // Pass 4: draw both render-target 1 and the original scene
             // image back into the main back-Buffer, using a shader that
@@ -113,7 +134,7 @@ namespace BloomEffectRenderer
             parameters[5].SetValue(irt);
 
             DrawFullscreenQuad(gd, sb, BloomRenderTarget1, ort, CombineEffect);
-            debugDelegate?.Invoke(ort, RenderPhase.COMBINE);
+            debugDelegate?.Invoke(name, ort, RenderPhase.COMBINE);
         }
 
         private void Clear(GraphicsDevice gd)
@@ -122,6 +143,11 @@ namespace BloomEffectRenderer
             Clear(gd, BloomRenderTarget2);
         }
 
+        /// <summary>
+        ///     Clears the specified <see cref="RenderTarget2D" /> with <see cref="Color.Black" />.
+        /// </summary>
+        /// <param name="gd">The gd.</param>
+        /// <param name="rt">The rt.</param>
         public static void Clear(GraphicsDevice gd, RenderTarget2D rt)
         {
             gd.SetRenderTarget(rt);
@@ -129,7 +155,8 @@ namespace BloomEffectRenderer
         }
 
         /// <summary>
-        ///     Helper for drawing a texture into a renderTarget, using a custom shader to apply postProcessing effects.
+        ///     Helper for drawing a whole, arbitrarily sized texture into a whole, arbitrarily sized renderTarget, using a custom
+        ///     shader to apply postProcessing effects.
         /// </summary>
         public static void DrawFullscreenQuad(GraphicsDevice gd, SpriteBatch sb, Texture2D t,
             RenderTarget2D renderTarget, Effect effect = null, BlendState blendState = null,
@@ -250,6 +277,9 @@ namespace BloomEffectRenderer
         {
             BloomRenderTarget1?.Dispose();
             BloomRenderTarget2?.Dispose();
+            ExtractEffect?.Dispose();
+            GaussianBlurEffect?.Dispose();
+            CombineEffect?.Dispose();
         }
     }
 }

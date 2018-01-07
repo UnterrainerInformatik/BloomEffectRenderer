@@ -32,9 +32,24 @@ namespace BloomEffectRenderer
     [PublicAPI]
     public enum RenderPhase
     {
+        /// <summary>
+        ///     The original texture is processed and all values above the bloomthreshold are kept.
+        /// </summary>
         EXTRACT,
+
+        /// <summary>
+        ///     The extract-texture is blured horizontally via a gaussian blur and resized to half the size.
+        /// </summary>
         BLUR_HORIZONTAL,
+
+        /// <summary>
+        ///     The horizontally blurred texture is blurred again vertically (size is kept at half).
+        /// </summary>
         BLUR_VERTICAL,
+
+        /// <summary>
+        ///     This step re-combines the original texture and the two-times-blurred texture to a new image.
+        /// </summary>
         COMBINE
     }
 }

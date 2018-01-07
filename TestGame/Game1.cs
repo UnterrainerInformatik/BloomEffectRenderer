@@ -26,6 +26,7 @@
 // ***************************************************************************
 
 using System;
+using System.Text;
 using BloomEffectRenderer;
 using InputStateManager;
 using Microsoft.Xna.Framework;
@@ -114,10 +115,14 @@ namespace TestGame
             if (Input.Pad.Is.Press(Buttons.Back) || Input.Key.Is.Press(Keys.Escape))
                 Exit();
 
+            HandleInput();
+            base.Update(gameTime);
+        }
+
+        private void HandleInput()
+        {
             if (Input.Key.Is.Press(Keys.Space))
                 IsBloom = !IsBloom;
-
-            base.Update(gameTime);
         }
 
         /// <summary>
@@ -127,10 +132,8 @@ namespace TestGame
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
             DrawImage();
             DrawText(gameTime);
-
             base.Draw(gameTime);
         }
 
@@ -154,7 +157,7 @@ namespace TestGame
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             Color c = Color.Lerp(Color.White, Color.Gray, t);
 
-            spriteBatch.DrawString(Font, "More to come... Press <ESC> to exit!", new Vector2(10, 10), c);
+            spriteBatch.DrawString(Font, BuildText(), new Vector2(10, 10), c);
 
             Vector2 s = Font.MeasureString(IMAGE_COPYRIGHT);
             spriteBatch.DrawString(Font,
@@ -163,6 +166,15 @@ namespace TestGame
                 c);
 
             spriteBatch.End();
+        }
+
+        private string BuildText()
+        {
+            StringBuilder sb = new StringBuilder();
+            string bloom = IsBloom ? "ON" : "OFF";
+            sb.Append($"Blur Effect: {bloom} (space)\n");
+            sb.Append("\nMore to come... Press <ESC> to exit!");
+            return sb.ToString();
         }
     }
 }

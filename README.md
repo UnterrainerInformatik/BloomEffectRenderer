@@ -24,6 +24,41 @@ The problem with that brute-force-approach is, that the number of checks grow ve
 
 ## Getting Started
 
+```c#
+private Point Resolution { get; } = new Point(1920, 1080);
+private Renderer Renderer { get; } = new Renderer();
+
+protected override void LoadContent()
+{
+  ...
+  Renderer.LoadContent(GraphicsDevice);
+  ...
+}
+
+protected override void UnloadContent()
+{
+  ...
+  Renderer?.UnloadContent();
+  ...
+}
+
+protected override void Initialize()
+{
+  base.Initialize();
+  Renderer.Initialize(graphics.GraphicsDevice, Resolution);
+}
+
+protected override void Draw(GameTime gameTime)
+{
+  // Image is some Texture2D that will be drawn to the backbuffer in this example.
+  // (hence the <null>).
+  // To bloom your game in a post-process step, draw all your assets to a
+  // RenderTarget2D first and then pass that rendertarget to this method.
+  Renderer.Render(graphics.GraphicsDevice, spriteBatch, "image", Image, null, Settings.PRESET_SETTINGS[1]);
+  base.Draw(gameTime);
+}
+```
+
 
 
 #### Example
