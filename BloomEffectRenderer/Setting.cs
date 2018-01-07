@@ -34,70 +34,70 @@ namespace BloomEffectRenderer
     ///     Class holds all the settings used to tweak the bloom effect.
     /// </summary>
     [PublicAPI]
-    public class Settings
+    public class Setting
     {
         /// <summary>
         ///     Table of preset bloom settings, used by the sample program.
         /// </summary>
-        public static readonly Settings[] PRESET_SETTINGS =
+        public static readonly Setting[] PRESET_SETTING =
         {
-            new Settings(name: "Default",
+            new Setting(name: "Default",
                 bloomThreshold: 0.25f,
                 blurAmount: 4,
                 bloomIntensity: 1.25f,
                 baseIntensity: 1,
                 bloomSaturation: 1,
                 baseSaturation: 1),
-            new Settings(name: "Soft",
+            new Setting(name: "Soft",
                 bloomThreshold: 0,
                 blurAmount: 3,
                 bloomIntensity: 1,
                 baseIntensity: 1,
                 bloomSaturation: 1,
                 baseSaturation: 1),
-            new Settings(name: "Desaturated",
+            new Setting(name: "Desaturated",
                 bloomThreshold: 0.5f,
                 blurAmount: 8,
                 bloomIntensity: 2,
                 baseIntensity: 1,
                 bloomSaturation: 0,
                 baseSaturation: 1),
-            new Settings(name: "Saturated",
+            new Setting(name: "Saturated",
                 bloomThreshold: 0.25f,
                 blurAmount: 4,
                 bloomIntensity: 2,
                 baseIntensity: 1,
                 bloomSaturation: 2,
                 baseSaturation: 0),
-            new Settings(name: "Blurry",
+            new Setting(name: "Blurry",
                 bloomThreshold: 0,
                 blurAmount: 2,
                 bloomIntensity: 1,
                 baseIntensity: 0.1f,
                 bloomSaturation: 1,
                 baseSaturation: 1),
-            new Settings(name: "Subtle",
+            new Setting(name: "Subtle",
                 bloomThreshold: 0.5f,
                 blurAmount: 2,
                 bloomIntensity: 1,
                 baseIntensity: 1,
                 bloomSaturation: 1,
                 baseSaturation: 1),
-            new Settings(name: "Subtle-",
+            new Setting(name: "Subtle-",
                 bloomThreshold: 0.5f,
                 blurAmount: 1.6f,
                 bloomIntensity: 0.8f,
                 baseIntensity: 1,
                 bloomSaturation: 1,
                 baseSaturation: 1),
-            new Settings(name: "Subtle+",
+            new Setting(name: "Subtle+",
                 bloomThreshold: 0.5f,
                 blurAmount: 2,
                 bloomIntensity: 1,
                 baseIntensity: 1.3f,
                 bloomSaturation: 1,
                 baseSaturation: 1.5f),
-            new Settings(name: "Desaturated++",
+            new Setting(name: "Desaturated++",
                 bloomThreshold: 0.25f,
                 blurAmount: 4,
                 bloomIntensity: 2,
@@ -137,7 +137,7 @@ namespace BloomEffectRenderer
         ///     base images. Zero is totally desaturated, 1.0 leaves saturation
         ///     unchanged, while higher values increase the saturation level.
         /// </param>
-        public Settings(string name, float bloomThreshold, float blurAmount, float bloomIntensity,
+        public Setting(string name, float bloomThreshold, float blurAmount, float bloomIntensity,
             float baseIntensity, float bloomSaturation, float baseSaturation)
         {
             BaseIntensity = new Fader(0f, 3f);
@@ -145,7 +145,7 @@ namespace BloomEffectRenderer
             BloomSaturation = new Fader(0f, 10f);
             BloomIntensity = new Fader(0f, 3f);
             BlurAmount = new Fader(0f, 10f);
-            BloomThreshold = new Fader(0f, 10f);
+            BloomThreshold = new Fader(0f, 1f);
             Name = name;
             BloomThreshold.Value = bloomThreshold;
             BlurAmount.Value = blurAmount;
@@ -215,7 +215,7 @@ namespace BloomEffectRenderer
         ///     Sets the values of all sliders to the values of the given setting.
         /// </summary>
         /// <param name="other">The other setting to copy the values from.</param>
-        public void CopyFrom(Settings other)
+        public void CopyFrom(Setting other)
         {
             Name = other.Name;
             BloomThreshold.Value = other.BloomThreshold.Value;
@@ -231,7 +231,7 @@ namespace BloomEffectRenderer
         /// </summary>
         /// <param name="min">The min value.</param>
         /// <param name="max">The max value.</param>
-        public void SetMinAndMax(Settings min, Settings max)
+        public void SetMinAndMax(Setting min, Setting max)
         {
             if (min.BloomThreshold.Value > max.BloomThreshold.Value)
             {

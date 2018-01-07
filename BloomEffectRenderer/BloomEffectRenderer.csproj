@@ -47,7 +47,7 @@
   <ItemGroup>
     <Compile Include="Effects\EffectResource.cs" />
     <Compile Include="Renderer.cs" />
-    <Compile Include="Settings.cs" />
+    <Compile Include="Setting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderPhase.cs" />
     <Compile Include="Utils\Fader.cs" />

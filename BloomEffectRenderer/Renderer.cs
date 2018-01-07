@@ -49,18 +49,27 @@ namespace BloomEffectRenderer
             // size of the back-Buffer, in order to minimize fill-rate costs. Reducing
             // the resolution in this way doesn't hurt quality, because we are going
             // to be blurring the bloom images anyway.
-            BloomRenderTarget1 = new RenderTarget2D(gd,
-                width: resolution.X / 2,
-                height: resolution.Y / 2,
-                mipMap: false,
-                preferredFormat: SurfaceFormat.Color,
-                preferredDepthFormat: DepthFormat.None);
-            BloomRenderTarget2 = new RenderTarget2D(gd,
-                width: resolution.X / 2,
-                height: resolution.Y / 2,
-                mipMap: false,
-                preferredFormat: SurfaceFormat.Color,
-                preferredDepthFormat: DepthFormat.None);
+            if (BloomRenderTarget1 == null || BloomRenderTarget1.Width != resolution.X ||
+                BloomRenderTarget1.Height != resolution.Y)
+            {
+                if (BloomRenderTarget1 != null)
+                {
+                    BloomRenderTarget1.Dispose();
+                    BloomRenderTarget2.Dispose();
+                }
+                BloomRenderTarget1 = new RenderTarget2D(gd,
+                    width: resolution.X / 2,
+                    height: resolution.Y / 2,
+                    mipMap: false,
+                    preferredFormat: SurfaceFormat.Color,
+                    preferredDepthFormat: DepthFormat.None);
+                BloomRenderTarget2 = new RenderTarget2D(gd,
+                    width: resolution.X / 2,
+                    height: resolution.Y / 2,
+                    mipMap: false,
+                    preferredFormat: SurfaceFormat.Color,
+                    preferredDepthFormat: DepthFormat.None);
+            }
         }
 
         /// <summary>
@@ -82,12 +91,12 @@ namespace BloomEffectRenderer
         /// <param name="name">The name of the render-run for better identification later on or when debugging.</param>
         /// <param name="irt">The input-<see cref="RenderTarget2D" />.</param>
         /// <param name="ort">The output-<see cref="RenderTarget2D" />.</param>
-        /// <param name="s">The bloom-<see cref="Settings" />.</param>
+        /// <param name="s">The bloom-<see cref="Setting" />.</param>
         /// <param name="debugDelegate">
         ///     The debug delegate to use (gets called on every individual <see cref="RenderPhase" /> to
         ///     enable debug-output outside of this class).
         /// </param>
-        public void Render(GraphicsDevice gd, SpriteBatch sb, string name, Texture2D irt, RenderTarget2D ort, Settings s,
+        public void Render(GraphicsDevice gd, SpriteBatch sb, string name, Texture2D irt, RenderTarget2D ort, Setting s,
             DebugDelegate debugDelegate = null)
         {
             Clear(gd);
@@ -199,7 +208,7 @@ namespace BloomEffectRenderer
         /// <summary>
         ///     Computes sample weightings and texture coordinate offsets for one pass of a separable Gaussian blur filter.
         /// </summary>
-        private void SetBlurEffectParameters(float dx, float dy, Settings settings)
+        private void SetBlurEffectParameters(float dx, float dy, Setting setting)
         {
             // Look up the sample weight and offset effect parameters.
             var weightsParameter = GaussianBlurEffect.Parameters["SampleWeights"];
@@ -213,7 +222,7 @@ namespace BloomEffectRenderer
             var sampleOffsets = new Vector2[sampleCount];
 
             // The first sample always has a zero offset.
-            sampleWeights[0] = ComputeGaussian(0, settings);
+            sampleWeights[0] = ComputeGaussian(0, setting);
             sampleOffsets[0] = new Vector2(0);
 
             // Maintain a sum of all the weighting values.
@@ -224,7 +233,7 @@ namespace BloomEffectRenderer
             for (var i = 0; i < sampleCount / 2; i++)
             {
                 // Store weights for the positive and negative taps.
-                var weight = ComputeGaussian(i + 1, settings);
+                var weight = ComputeGaussian(i + 1, setting);
 
                 sampleWeights[i * 2 + 1] = weight;
                 sampleWeights[i * 2 + 2] = weight;
@@ -260,9 +269,9 @@ namespace BloomEffectRenderer
         /// <summary>
         ///     Evaluates a single point on the Gaussian falloff curve. Used for setting up the blur filter weightings.
         /// </summary>
-        private static float ComputeGaussian(float n, Settings settings)
+        private static float ComputeGaussian(float n, Setting setting)
         {
-            var theta = settings.BlurAmount.Value;
+            var theta = setting.BlurAmount.Value;
             return (float) (1.0 / Math.Sqrt(2 * Math.PI * theta) * Math.Exp(-(n * n) / (2 * theta * theta)));
         }
 

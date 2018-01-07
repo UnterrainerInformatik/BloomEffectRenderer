@@ -28,6 +28,7 @@
 using System;
 using System.Text;
 using BloomEffectRenderer;
+using BloomEffectRenderer.Utils;
 using InputStateManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -53,6 +54,7 @@ namespace TestGame
         private Point Resolution { get; } = new Point(1280, 720);
         private Renderer Renderer { get; } = new Renderer();
         private bool IsBloom { get; set; } = true;
+        private int SettingIndex { get; set; }
         private InputManager Input { get; } = new InputManager();
 
         public Game1()
@@ -123,6 +125,49 @@ namespace TestGame
         {
             if (Input.Key.Is.Press(Keys.Space))
                 IsBloom = !IsBloom;
+            if (Input.Key.Is.Press(Keys.OemPlus) || Input.Key.Is.Press(Keys.Add))
+            {
+                SettingIndex++;
+                if (SettingIndex >= Setting.PRESET_SETTING.Length)
+                    SettingIndex = 0;
+            }
+            if (Input.Key.Is.Press(Keys.OemMinus) || Input.Key.Is.Press(Keys.Subtract))
+            {
+                SettingIndex--;
+                if (SettingIndex < 0)
+                    SettingIndex = Setting.PRESET_SETTING.Length - 1;
+            }
+
+            Setting s = Setting.PRESET_SETTING[SettingIndex];
+            bool m = false;
+            HandleFloatInput(Keys.Q, Keys.W, .01f, s.BloomThreshold, ref m, true);
+            HandleFloatInput(Keys.A, Keys.S, .1f, s.BlurAmount, ref m, true);
+            HandleFloatInput(Keys.Y, Keys.X, .1f, s.BloomIntensity, ref m, true);
+            HandleFloatInput(Keys.E, Keys.R, .1f, s.BloomSaturation, ref m, true);
+            HandleFloatInput(Keys.D, Keys.F, .1f, s.BaseIntensity, ref m, true);
+            HandleFloatInput(Keys.C, Keys.V, .1f, s.BaseSaturation, ref m, true);
+        }
+
+        private void HandleFloatInput(Keys down, Keys up, float step, Fader f, ref bool isModified, bool repeat = false)
+        {
+            f.Value = HandleFloatInput(down, up, step, (float)f.Value, ref isModified, repeat);
+        }
+
+        private float HandleFloatInput(Keys down, Keys up, float step, float value, ref bool isModified,
+            bool repeat = false)
+        {
+            float v = 0;
+            if (!repeat && Input.Key.Is.Press(up) || repeat && Input.Key.Is.Down(up))
+            {
+                v = step;
+                isModified = true;
+            }
+            if (!repeat && Input.Key.Is.Press(down) || repeat && Input.Key.Is.Down(down))
+            {
+                v = -step;
+                isModified = true;
+            }
+            return value + v;
         }
 
         /// <summary>
@@ -141,7 +186,12 @@ namespace TestGame
         {
             if (IsBloom)
             {
-                Renderer.Render(graphics.GraphicsDevice, spriteBatch, "image", Image, null, Settings.PRESET_SETTINGS[1]);
+                Renderer.Render(graphics.GraphicsDevice,
+                    spriteBatch,
+                    "image",
+                    Image,
+                    null,
+                    Setting.PRESET_SETTING[SettingIndex]);
             }
             else
             {
@@ -153,27 +203,32 @@ namespace TestGame
 
         private void DrawText(GameTime gameTime)
         {
-            var t = .5f + .5f * (float)Math.Sin(5 * gameTime.TotalGameTime.TotalSeconds);
+            var t = .5f + .5f * (float) Math.Sin(5 * gameTime.TotalGameTime.TotalSeconds);
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             Color c = Color.Lerp(Color.White, Color.Gray, t);
 
             spriteBatch.DrawString(Font, BuildText(), new Vector2(10, 10), c);
 
             Vector2 s = Font.MeasureString(IMAGE_COPYRIGHT);
-            spriteBatch.DrawString(Font,
-                IMAGE_COPYRIGHT,
-                new Vector2(30f, Resolution.Y - s.Y - 30f),
-                c);
+            spriteBatch.DrawString(Font, IMAGE_COPYRIGHT, new Vector2(30f, Resolution.Y - s.Y - 30f), c);
 
             spriteBatch.End();
         }
 
         private string BuildText()
         {
+            Setting s = Setting.PRESET_SETTING[SettingIndex];
             StringBuilder sb = new StringBuilder();
             string bloom = IsBloom ? "ON" : "OFF";
-            sb.Append($"Blur Effect: {bloom} (space)\n");
-            sb.Append("\nMore to come... Press <ESC> to exit!");
+            sb.Append($"Blur Effect: {bloom} (space)\n\n");
+            sb.Append($"Setting: [{SettingIndex+1}/{Setting.PRESET_SETTING.Length}] {s.Name} >(+), <(-)\n");
+            sb.Append($"  BloomThreshold : {s.BloomThreshold.Value:0.###} >(q), <(w)\n");
+            sb.Append($"  BlurAmount     : {s.BlurAmount.Value:0.###} >(a), <(s)\n");
+            sb.Append($"  BloomIntensity : {s.BloomIntensity.Value:0.###} >(y), <(x)\n");
+            sb.Append($"  BloomSaturation: {s.BloomSaturation.Value:0.###} >(e), <(r)\n");
+            sb.Append($"  BaseIntensity  : {s.BaseIntensity.Value:0.###} >(d), <(f)\n");
+            sb.Append($"  BaseSaturation : {s.BaseSaturation.Value:0.###} >(c), <(v)\n");
+            sb.Append("\nPress <ESC> to exit!");
             return sb.ToString();
         }
     }
