@@ -72,6 +72,22 @@ namespace BloomEffectRenderer
             }
         }
 
+        public void LoadContent(GraphicsDevice graphicsDevice)
+        {
+            ExtractEffect = new Effect(graphicsDevice, EffectResource.ExtractEffect.Bytecode);
+            GaussianBlurEffect = new Effect(graphicsDevice, EffectResource.BlurEffect.Bytecode);
+            CombineEffect = new Effect(graphicsDevice, EffectResource.CombineEffect.Bytecode);
+        }
+
+        public void UnloadContent()
+        {
+            BloomRenderTarget1?.Dispose();
+            BloomRenderTarget2?.Dispose();
+            ExtractEffect?.Dispose();
+            GaussianBlurEffect?.Dispose();
+            CombineEffect?.Dispose();
+        }
+
         /// <summary>
         ///     A delegate you may use if you want to render the individual steps of this pipeline in order to debug.
         /// </summary>
@@ -174,6 +190,9 @@ namespace BloomEffectRenderer
             gd.SetRenderTarget(renderTarget);
             gd.Clear(Color.Black);
 
+            if (t == null)
+                return;
+
             sb.Begin(SpriteSortMode.Immediate,
                 blendState ?? BlendState.Opaque,
                 samplerState ?? SamplerState.PointClamp,
@@ -193,15 +212,14 @@ namespace BloomEffectRenderer
                 h = renderTarget.Height;
             }
 
-            if (t != null)
-                sb.Draw(t,
-                    new Rectangle(0, 0, w, h),
-                    new Rectangle(0, 0, t.Width, t.Height),
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    SpriteEffects.None,
-                    1f);
+            sb.Draw(t,
+                new Rectangle(0, 0, w, h),
+                new Rectangle(0, 0, t.Width, t.Height),
+                Color.White,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                1f);
             sb.End();
         }
 
@@ -273,22 +291,6 @@ namespace BloomEffectRenderer
         {
             var theta = setting.BlurAmount.Value;
             return (float) (1.0 / Math.Sqrt(2 * Math.PI * theta) * Math.Exp(-(n * n) / (2 * theta * theta)));
-        }
-
-        public void LoadContent(GraphicsDevice graphicsDevice)
-        {
-            ExtractEffect = new Effect(graphicsDevice, EffectResource.ExtractEffect.Bytecode);
-            GaussianBlurEffect = new Effect(graphicsDevice, EffectResource.BlurEffect.Bytecode);
-            CombineEffect = new Effect(graphicsDevice, EffectResource.CombineEffect.Bytecode);
-        }
-
-        public void UnloadContent()
-        {
-            BloomRenderTarget1?.Dispose();
-            BloomRenderTarget2?.Dispose();
-            ExtractEffect?.Dispose();
-            GaussianBlurEffect?.Dispose();
-            CombineEffect?.Dispose();
         }
     }
 }

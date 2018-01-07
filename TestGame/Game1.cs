@@ -48,14 +48,18 @@ namespace TestGame
 
         private readonly GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
+        private InputManager Input { get; } = new InputManager();
 
         private SpriteFont Font { get; set; }
         private Texture2D Image { get; set; }
         private Point Resolution { get; } = new Point(1280, 720);
         private Renderer Renderer { get; } = new Renderer();
+
         private bool IsBloom { get; set; } = true;
+        private bool IsDebug { get; set; } = true;
         private int SettingIndex { get; set; }
-        private InputManager Input { get; } = new InputManager();
+        private RenderTarget2D DebugTarget { get; set; }
+        private GameTime GameTime { get; set; }
 
         public Game1()
         {
@@ -82,6 +86,14 @@ namespace TestGame
         {
             base.Initialize();
             Renderer.Initialize(graphics.GraphicsDevice, Resolution);
+            DebugTarget = new RenderTarget2D(graphicsDevice: graphics.GraphicsDevice,
+                width: Resolution.X,
+                height: Resolution.Y,
+                mipMap: false,
+                preferredFormat: SurfaceFormat.Color,
+                preferredDepthFormat: DepthFormat.None,
+                preferredMultiSampleCount: 1,
+                usage: RenderTargetUsage.PreserveContents);
         }
 
         /// <summary>
@@ -125,6 +137,9 @@ namespace TestGame
         {
             if (Input.Key.Is.Press(Keys.Space))
                 IsBloom = !IsBloom;
+            if (Input.Key.Is.Press(Keys.Tab))
+                IsDebug = !IsDebug;
+
             if (Input.Key.Is.Press(Keys.OemPlus) || Input.Key.Is.Press(Keys.Add))
             {
                 SettingIndex++;
@@ -150,7 +165,7 @@ namespace TestGame
 
         private void HandleFloatInput(Keys down, Keys up, float step, Fader f, ref bool isModified, bool repeat = false)
         {
-            f.Value = HandleFloatInput(down, up, step, (float)f.Value, ref isModified, repeat);
+            f.Value = HandleFloatInput(down, up, step, (float) f.Value, ref isModified, repeat);
         }
 
         private float HandleFloatInput(Keys down, Keys up, float step, float value, ref bool isModified,
@@ -176,8 +191,14 @@ namespace TestGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.SetRenderTarget(DebugTarget);
+            GraphicsDevice.Clear(Color.TransparentBlack);
+            GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            // Persist gameTime to pass it to the debug-renderer for font-lerping.
+            GameTime = gameTime;
             DrawImage();
+            DrawDebugTarget();
             DrawText(gameTime);
             base.Draw(gameTime);
         }
@@ -191,7 +212,8 @@ namespace TestGame
                     "image",
                     Image,
                     null,
-                    Setting.PRESET_SETTING[SettingIndex]);
+                    Setting.PRESET_SETTING[SettingIndex],
+                    DebugDel);
             }
             else
             {
@@ -201,17 +223,53 @@ namespace TestGame
             }
         }
 
-        private void DrawText(GameTime gameTime)
+        private void DebugDel(string name, RenderTarget2D t, RenderPhase phase)
+        {
+            if (t != null)
+            {
+                // The constantly switching to and from the debug-rendertarget only works if it's set to 'preserveContents' which is something
+                // I wouldn't recommend doing in a real game-environment.
+                GraphicsDevice.SetRenderTarget(DebugTarget);
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+                float f = 7;
+                spriteBatch.Draw(t,
+                    new Rectangle(((int) phase + 1) * Resolution.X / (int) f,
+                        5 * (Resolution.Y / (int) f),
+                        (int) (Resolution.X / f),
+                        (int) (Resolution.Y / f)),
+                    Color.White);
+                spriteBatch.DrawString(Font,
+                    phase + ":",
+                    new Vector2(((int) phase + 1f) * Resolution.X / (int) f, 5 * (Resolution.Y / (int) f) - 10),
+                    GetLerpColor(GameTime));
+                spriteBatch.End();
+            }
+        }
+
+        private void DrawDebugTarget()
+        {
+            if (IsDebug)
+            {
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+                spriteBatch.Draw(DebugTarget, new Rectangle(0, 0, Resolution.X, Resolution.Y), Color.White);
+                spriteBatch.End();
+            }
+        }
+
+        private Color GetLerpColor(GameTime gameTime)
         {
             var t = .5f + .5f * (float) Math.Sin(5 * gameTime.TotalGameTime.TotalSeconds);
+            return Color.Lerp(Color.White, Color.Gray, t);
+        }
+
+        private void DrawText(GameTime gameTime)
+        {
+            Color c = GetLerpColor(gameTime);
+
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-            Color c = Color.Lerp(Color.White, Color.Gray, t);
-
             spriteBatch.DrawString(Font, BuildText(), new Vector2(10, 10), c);
-
             Vector2 s = Font.MeasureString(IMAGE_COPYRIGHT);
             spriteBatch.DrawString(Font, IMAGE_COPYRIGHT, new Vector2(30f, Resolution.Y - s.Y - 30f), c);
-
             spriteBatch.End();
         }
 
@@ -220,8 +278,10 @@ namespace TestGame
             Setting s = Setting.PRESET_SETTING[SettingIndex];
             StringBuilder sb = new StringBuilder();
             string bloom = IsBloom ? "ON" : "OFF";
-            sb.Append($"Blur Effect: {bloom} (space)\n\n");
-            sb.Append($"Setting: [{SettingIndex+1}/{Setting.PRESET_SETTING.Length}] {s.Name} >(+), <(-)\n");
+            string debug = IsDebug ? "ON" : "OFF";
+            sb.Append($"Blur Effect: {bloom} (SPACE)\n");
+            sb.Append($"Debug View: {debug} (TAB)\n\n");
+            sb.Append($"Setting: [{SettingIndex + 1}/{Setting.PRESET_SETTING.Length}] {s.Name} >(+), <(-)\n");
             sb.Append($"  BloomThreshold : {s.BloomThreshold.Value:0.###} >(q), <(w)\n");
             sb.Append($"  BlurAmount     : {s.BlurAmount.Value:0.###} >(a), <(s)\n");
             sb.Append($"  BloomIntensity : {s.BloomIntensity.Value:0.###} >(y), <(x)\n");
