@@ -27,6 +27,7 @@
 
 using System;
 using BloomEffectRenderer;
+using InputStateManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -50,7 +51,8 @@ namespace TestGame
         private Texture2D Image { get; set; }
         private Point Resolution { get; } = new Point(1280, 720);
         private Renderer Renderer { get; } = new Renderer();
-        private bool IsBoom { get; set; } = true;
+        private bool IsBloom { get; set; } = true;
+        private InputManager Input { get; } = new InputManager();
 
         public Game1()
         {
@@ -61,6 +63,9 @@ namespace TestGame
             graphics.IsFullScreen = false;
             graphics.PreparingDeviceSettings += PrepareDeviceSettings;
             graphics.SynchronizeWithVerticalRetrace = true;
+
+            IsMouseVisible = true;
+            IsFixedTimeStep = true;
 
             Content.RootDirectory = "Content";
         }
@@ -86,6 +91,7 @@ namespace TestGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Font = Content.Load<SpriteFont>("AnonymousPro8");
             Image = Content.Load<Texture2D>("image");
+            Renderer.LoadContent(GraphicsDevice);
         }
 
         /// <summary>
@@ -104,11 +110,12 @@ namespace TestGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-                Keyboard.GetState().IsKeyDown(Keys.Escape))
+            Input.Update();
+            if (Input.Pad.Is.Press(Buttons.Back) || Input.Key.Is.Press(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            if (Input.Key.Is.Press(Keys.Space))
+                IsBloom = !IsBloom;
 
             base.Update(gameTime);
         }
@@ -129,7 +136,7 @@ namespace TestGame
 
         private void DrawImage()
         {
-            if (IsBoom)
+            if (IsBloom)
             {
                 Renderer.Render(graphics.GraphicsDevice, spriteBatch, "image", Image, null, Settings.PRESET_SETTINGS[1]);
             }

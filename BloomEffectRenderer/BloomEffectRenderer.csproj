@@ -35,9 +35,17 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <EmbeddedResource Include="Effects\Resources\BloomCombine.dx11.mgfxo" />
+    <EmbeddedResource Include="Effects\Resources\BloomCombine.ogl.mgfxo" />
+    <EmbeddedResource Include="Effects\Resources\BloomExtract.dx11.mgfxo" />
+    <EmbeddedResource Include="Effects\Resources\BloomExtract.ogl.mgfxo" />
+    <EmbeddedResource Include="Effects\Resources\GaussianBlur.dx11.mgfxo" />
+    <EmbeddedResource Include="Effects\Resources\GaussianBlur.ogl.mgfxo" />
+    <None Include="Effects\Resources\RebuildEffects.bat" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Effects\EffectResource.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -55,6 +63,11 @@
       <HintPath>..\packages\MonoGame.Framework.Portable.3.6.0.1625\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Effects\Resources\BloomCombine.fx" />
+    <Content Include="Effects\Resources\BloomExtract.fx" />
+    <Content Include="Effects\Resources\GaussianBlur.fx" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -26,6 +26,7 @@
 // ***************************************************************************
 
 using System;
+using BloomEffectRenderer.Effects;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -39,8 +40,8 @@ namespace BloomEffectRenderer
         public RenderTarget2D BloomRenderTarget1 { get; private set; }
         public RenderTarget2D BloomRenderTarget2 { get; private set; }
 
-        private Effect BloomCombineEffect { get; set; }
-        private Effect BloomExtractEffect { get; set; }
+        private Effect CombineEffect { get; set; }
+        private Effect ExtractEffect { get; set; }
         private Effect GaussianBlurEffect { get; set; }
 
         public void Initialize(GraphicsDevice gd, Point resolution)
@@ -71,8 +72,8 @@ namespace BloomEffectRenderer
             Clear(gd);
             // Pass 1: draw the scene into render-target 1, using a
             // shader that extracts only the brightest parts of the image.
-            BloomExtractEffect.Parameters["BloomThreshold"].SetValue((float) s.BloomThreshold.Value);
-            DrawFullscreenQuad(gd, sb, irt, BloomRenderTarget1, BloomExtractEffect);
+            ExtractEffect.Parameters["BloomThreshold"].SetValue((float) s.BloomThreshold.Value);
+            DrawFullscreenQuad(gd, sb, irt, BloomRenderTarget1, ExtractEffect);
             debugDelegate?.Invoke(BloomRenderTarget1, RenderPhase.EXTRACT);
 
             // Pass 2: draw from render-target 1 into render-target 2,
@@ -104,14 +105,14 @@ namespace BloomEffectRenderer
             // Pass 4: draw both render-target 1 and the original scene
             // image back into the main back-Buffer, using a shader that
             // combines them to produce the final bloomed result.
-            var parameters = BloomCombineEffect.Parameters;
+            var parameters = CombineEffect.Parameters;
             parameters["BloomIntensity"].SetValue((float) s.BloomIntensity.Value);
             parameters["BaseIntensity"].SetValue((float) s.BaseIntensity.Value);
             parameters["BloomSaturation"].SetValue((float) s.BloomSaturation.Value);
             parameters["BaseSaturation"].SetValue((float) s.BaseSaturation.Value);
-            parameters["BaseTexture"].SetValue(irt);
+            parameters[5].SetValue(irt);
 
-            DrawFullscreenQuad(gd, sb, BloomRenderTarget1, ort, BloomCombineEffect);
+            DrawFullscreenQuad(gd, sb, BloomRenderTarget1, ort, CombineEffect);
             debugDelegate?.Invoke(ort, RenderPhase.COMBINE);
         }
 
@@ -238,11 +239,11 @@ namespace BloomEffectRenderer
             return (float) (1.0 / Math.Sqrt(2 * Math.PI * theta) * Math.Exp(-(n * n) / (2 * theta * theta)));
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent(GraphicsDevice graphicsDevice)
         {
-            BloomExtractEffect = content.Load<Effect>("BloomExtract");
-            BloomCombineEffect = content.Load<Effect>("BloomCombine");
-            GaussianBlurEffect = content.Load<Effect>("GaussianBlur");
+            ExtractEffect = new Effect(graphicsDevice, EffectResource.ExtractEffect.Bytecode);
+            GaussianBlurEffect = new Effect(graphicsDevice, EffectResource.BlurEffect.Bytecode);
+            CombineEffect = new Effect(graphicsDevice, EffectResource.CombineEffect.Bytecode);
         }
 
         public void UnloadContent()

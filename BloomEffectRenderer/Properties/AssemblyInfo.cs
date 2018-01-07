@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("BloomEffectRenderer")]
-[assembly: AssemblyDescription("This is an extension repository for MonoGame. It uses your local MG installation and provides an easy way to render a bloom-post-process-effect from and to any RenderTarget you like.")]
+[assembly: AssemblyDescription("This is a PCL library for MonoGame. It uses your local MG installation and provides an easy way to render a bloom-post-process-effect from and to any RenderTarget you like.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Unterrainer Informatik OG")]
 [assembly: AssemblyProduct("BloomEffectRenderer")]
