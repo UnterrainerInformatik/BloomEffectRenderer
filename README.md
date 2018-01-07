@@ -30,7 +30,7 @@ This project is based on the following blog posts:
 * https://digitalerr0r.wordpress.com/2009/10/04/xna-shader-programming-tutorial-23-blur-post-process/
 * https://digitalerr0r.wordpress.com/2009/10/04/xna-shader-programming-tutorial-24-bloom/
 
-Thx to the [MonoGame.Extended](https://github.com/craftworkgames/MonoGame.Extended) project for their excellent work and teaching me how to embed shaders into a dll.
+Thx to the [MonoGame.Extended](https://github.com/craftworkgames/MonoGame.Extended) project for their excellent work and teaching me how to embed shaders into a DLL.
 
 You don't have to mess with shaders since those are included in the distribution.
 
@@ -72,6 +72,58 @@ protected override void Draw(GameTime gameTime)
   base.Draw(gameTime);
 }
 ```
+
+### Debugging
+
+You may access any of the intermediate images produced by the renderer.
+
+For that you'll have to pass a delegate when calling `Render()` like so:
+
+```C#
+// Your delegate. This one saves the images with some unique name, but you
+// could also render them directly onto another RenderTarget, for example.
+private void BloomDebugDelegate(string name, RenderTarget2D t, RenderPhase phase)
+{
+  FileStream fs = new FileStream($"{((int)phase)+1}{name}_{phase}.png", FileMode.OpenOrCreate);
+  t.SaveAsPng(fs, texture2D.Width, texture2D.Height);
+  fs.Flush();
+  fs.Close();
+}
+
+// And call the renderer like so:
+Renderer.Render(graphics.GraphicsDevice, spriteBatch, "image", Image, null, Settings.PRESET_SETTINGS[1], BloomDebugDelegate);
+```
+
+This will call your delegate once for every render-phase.
+
+```C#
+[PublicAPI]
+public enum RenderPhase
+{
+  /// <summary>
+  /// The original texture is processed and all values above
+  /// the bloomthreshold are kept.
+  /// </summary>
+  EXTRACT,
+  /// <summary>
+  /// The extract-texture is blured horizontally via a gaussian
+  /// blur and resized to half the size.
+  /// </summary>
+  BLUR_HORIZONTAL,
+  /// <summary>
+  /// The horizontally blurred texture is blurred again 
+  /// vertically (size is kept at half).
+  /// </summary>
+  BLUR_VERTICAL,
+  /// <summary>
+  /// This step re-combines the original texture and the 
+  /// two-times-blurred texture to a new image.
+  /// </summary>
+  COMBINE
+}
+```
+
+
 
 ## TestGame
 
