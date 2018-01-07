@@ -30,7 +30,7 @@ This project is based on the following blog posts:
 * https://digitalerr0r.wordpress.com/2009/10/04/xna-shader-programming-tutorial-23-blur-post-process/
 * https://digitalerr0r.wordpress.com/2009/10/04/xna-shader-programming-tutorial-24-bloom/
 
-
+Thx to the [MonoGame.Extended](https://github.com/craftworkgames/MonoGame.Extended) project for their excellent work and teaching me how to embed shaders into a dll.
 
 You don't have to mess with shaders since those are included in the distribution.
 
@@ -88,6 +88,13 @@ Here are a few screenshots:
  ![Bloom 3](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/bloom_3.png)
 
   
+
+# References
+
+- http://xbox.create.msdn.com/en-US/education/catalog/sample/bloom
+- https://digitalerr0r.wordpress.com/2009/10/04/xna-shader-programming-tutorial-23-blur-post-process/
+- https://digitalerr0r.wordpress.com/2009/10/04/xna-shader-programming-tutorial-24-bloom/
+- [MG.EX](https://github.com/craftworkgames/MonoGame.Extended)
 
 [homepage]: http://www.unterrainer.info
 [coding]: http://www.unterrainer.info/Home/Coding
