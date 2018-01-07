@@ -24,6 +24,20 @@ The problem with that brute-force-approach is, that the number of checks grow ve
 
 ## Getting Started
 
+This project is based on the following blog posts:
+
+* http://xbox.create.msdn.com/en-US/education/catalog/sample/bloom
+* https://digitalerr0r.wordpress.com/2009/10/04/xna-shader-programming-tutorial-23-blur-post-process/
+* https://digitalerr0r.wordpress.com/2009/10/04/xna-shader-programming-tutorial-24-bloom/
+
+
+
+You don't have to mess with shaders since those are included in the distribution.
+
+
+
+#### Example
+
 ```c#
 private Point Resolution { get; } = new Point(1920, 1080);
 private Renderer Renderer { get; } = new Renderer();
@@ -59,11 +73,21 @@ protected override void Draw(GameTime gameTime)
 }
 ```
 
+## TestGame
 
+A test-project is included. You can manipulate the values of the shaders directly and see what happens.
 
-#### Example
+Here are a few screenshots:
 
+![Bloom Off](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/bloom_off.png)
 
+ ![Bloom 1](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/bloom_1.png)
+
+![Bloom 2](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/bloom_2.png)
+
+ ![Bloom 3](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/bloom_3.png)
+
+  
 
 [homepage]: http://www.unterrainer.info
 [coding]: http://www.unterrainer.info/Home/Coding
