@@ -38,12 +38,30 @@ namespace BloomEffectRenderer
     {
         public RenderTarget2D BloomRenderTarget1 { get; private set; }
         public RenderTarget2D BloomRenderTarget2 { get; private set; }
+        private bool IsBloomRenderTarget1Passed { get; set; }
+        private bool IsBloomRenderTarget2Passed { get; set; }
 
         private Effect CombineEffect { get; set; }
         private Effect ExtractEffect { get; set; }
         private Effect GaussianBlurEffect { get; set; }
 
-        public void Initialize(GraphicsDevice gd, Point resolution)
+
+        /// <summary>
+        ///     Initializes the renderer.<br />
+        ///     Please call this in the initialize method of your game (or at least before the first draw-call).
+        /// </summary>
+        /// <param name="graphicsDevice">The <see cref="GraphicsDevice" /> to use for drawing.</param>
+        /// <param name="resolution">The resolution of your output-target.</param>
+        /// <param name="bloomRenderTarget1">
+        ///     A temporary bloom render target1. Gets automatically created and disposed off if you
+        ///     pass null. If you pass one to this method, remember to dispose (unload) it yourself.
+        /// </param>
+        /// <param name="bloomRenderTarget2">
+        ///     A temporary bloom render target2. Gets automatically created and disposed off if you
+        ///     pass null. If you pass one to this method, remember to dispose (unload) it yourself.
+        /// </param>
+        public void Initialize(GraphicsDevice graphicsDevice, Point resolution,
+            RenderTarget2D bloomRenderTarget1 = null, RenderTarget2D bloomRenderTarget2 = null)
         {
             // Create two render-targets for the bloom processing. These are half the
             // size of the back-Buffer, in order to minimize fill-rate costs. Reducing
@@ -57,21 +75,44 @@ namespace BloomEffectRenderer
                     BloomRenderTarget1.Dispose();
                     BloomRenderTarget2.Dispose();
                 }
-                BloomRenderTarget1 = new RenderTarget2D(gd,
-                    width: resolution.X / 2,
-                    height: resolution.Y / 2,
-                    mipMap: false,
-                    preferredFormat: SurfaceFormat.Color,
-                    preferredDepthFormat: DepthFormat.None);
-                BloomRenderTarget2 = new RenderTarget2D(gd,
-                    width: resolution.X / 2,
-                    height: resolution.Y / 2,
-                    mipMap: false,
-                    preferredFormat: SurfaceFormat.Color,
-                    preferredDepthFormat: DepthFormat.None);
+
+                if (bloomRenderTarget1 == null)
+                {
+                    BloomRenderTarget1 = new RenderTarget2D(graphicsDevice,
+                        width: resolution.X / 2,
+                        height: resolution.Y / 2,
+                        mipMap: false,
+                        preferredFormat: SurfaceFormat.Color,
+                        preferredDepthFormat: DepthFormat.None);
+                }
+                else
+                {
+                    BloomRenderTarget1 = bloomRenderTarget1;
+                    IsBloomRenderTarget1Passed = true;
+                }
+
+                if (bloomRenderTarget2 == null)
+                {
+                    BloomRenderTarget2 = new RenderTarget2D(graphicsDevice,
+                        width: resolution.X / 2,
+                        height: resolution.Y / 2,
+                        mipMap: false,
+                        preferredFormat: SurfaceFormat.Color,
+                        preferredDepthFormat: DepthFormat.None);
+                }
+                else
+                {
+                    BloomRenderTarget2 = bloomRenderTarget2;
+                    IsBloomRenderTarget2Passed = true;
+                }
             }
         }
 
+        /// <summary>
+        ///     Loads the effects of this pipeline.<br />
+        ///     Please call this in the LoadContent() method of your game.
+        /// </summary>
+        /// <param name="graphicsDevice">The graphics device.</param>
         public void LoadContent(GraphicsDevice graphicsDevice)
         {
             ExtractEffect = new Effect(graphicsDevice, EffectResource.ExtractEffect.Bytecode);
@@ -79,10 +120,17 @@ namespace BloomEffectRenderer
             CombineEffect = new Effect(graphicsDevice, EffectResource.CombineEffect.Bytecode);
         }
 
+        /// <summary>
+        ///     Unloads the effects of this pipeline and the temporary RenderTargets, if you didn't pass them in the
+        ///     <see cref="Initialize" /> method.<br />
+        ///     Please call this in the UnloadContent() method of your game.
+        /// </summary>
         public void UnloadContent()
         {
-            BloomRenderTarget1?.Dispose();
-            BloomRenderTarget2?.Dispose();
+            if (!IsBloomRenderTarget1Passed)
+                BloomRenderTarget1?.Dispose();
+            if (!IsBloomRenderTarget2Passed)
+                BloomRenderTarget2?.Dispose();
             ExtractEffect?.Dispose();
             GaussianBlurEffect?.Dispose();
             CombineEffect?.Dispose();
@@ -162,38 +210,54 @@ namespace BloomEffectRenderer
             debugDelegate?.Invoke(name, ort, RenderPhase.COMBINE);
         }
 
-        private void Clear(GraphicsDevice gd)
+        private void Clear(GraphicsDevice graphicsDevice)
         {
-            Clear(gd, BloomRenderTarget1);
-            Clear(gd, BloomRenderTarget2);
+            Clear(graphicsDevice, BloomRenderTarget1);
+            Clear(graphicsDevice, BloomRenderTarget2);
         }
 
         /// <summary>
-        ///     Clears the specified <see cref="RenderTarget2D" /> with <see cref="Color.Black" />.
+        ///     Clears the specified <see cref="RenderTarget2D" /> with a given <see cref="Color" />.
         /// </summary>
-        /// <param name="gd">The gd.</param>
-        /// <param name="rt">The rt.</param>
-        public static void Clear(GraphicsDevice gd, RenderTarget2D rt)
+        /// <param name="graphicsDevice">The <see cref="GraphicsDevice" /> to use for drawing.</param>
+        /// <param name="renderTarget">The <see cref="RenderTarget2D" /> to clear.</param>
+        /// <param name="clearColor">
+        ///     The <see cref="Color" /> to use when clearing the RenderTarget before drawing (default is
+        ///     Color.Black).
+        /// </param>
+        public static void Clear(GraphicsDevice graphicsDevice, RenderTarget2D renderTarget, Color? clearColor = null)
         {
-            gd.SetRenderTarget(rt);
-            gd.Clear(Color.Black);
+            graphicsDevice.SetRenderTarget(renderTarget);
+            graphicsDevice.Clear(Color.Black);
         }
 
         /// <summary>
-        ///     Helper for drawing a whole, arbitrarily sized texture into a whole, arbitrarily sized renderTarget, using a custom
-        ///     shader to apply postProcessing effects.
+        ///     Draws a whole, arbitrarily sized texture into a whole, arbitrarily sized renderTarget, using a custom shader to
+        ///     apply postProcessing effects.<br />
+        ///     Clears the target-rendertarget to black before drawing by default.
         /// </summary>
-        public static void DrawFullscreenQuad(GraphicsDevice gd, SpriteBatch sb, Texture2D t,
+        /// <param name="graphicsDevice">The <see cref="GraphicsDevice" /> to use for drawing.</param>
+        /// <param name="spriteBatch">The <see cref="SpriteBatch" /> to use for drawing.</param>
+        /// <param name="texture">The <see cref="Texture2D" /> to draw onto the target.</param>
+        /// <param name="renderTarget">The <see cref="RenderTarget2D" /> to draw to.</param>
+        /// <param name="effect">The <see cref="Effect" /> to use when beginning the SpriteBatch (default is null -> none).</param>
+        /// <param name="blendState">The <see cref="BlendState" /> to use for drawing (default is BlendState.Opaque).</param>
+        /// <param name="samplerState">The <see cref="SamplerState" /> to use for drawing (default is SamplerState.PointClamp).</param>
+        /// <param name="clearColor">
+        ///     The <see cref="Color" /> to use when clearing the RenderTarget before drawing (default is
+        ///     Color.Black).
+        /// </param>
+        public static void DrawFullscreenQuad(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, Texture2D texture,
             RenderTarget2D renderTarget, Effect effect = null, BlendState blendState = null,
-            SamplerState samplerState = null)
+            SamplerState samplerState = null, Color? clearColor = null)
         {
-            gd.SetRenderTarget(renderTarget);
-            gd.Clear(Color.Black);
+            graphicsDevice.SetRenderTarget(renderTarget);
+            graphicsDevice.Clear(clearColor ?? Color.Black);
 
-            if (t == null)
+            if (texture == null)
                 return;
 
-            sb.Begin(SpriteSortMode.Immediate,
+            spriteBatch.Begin(SpriteSortMode.Immediate,
                 blendState ?? BlendState.Opaque,
                 samplerState ?? SamplerState.PointClamp,
                 DepthStencilState.None,
@@ -203,8 +267,8 @@ namespace BloomEffectRenderer
             int w, h;
             if (renderTarget == null)
             {
-                w = gd.PresentationParameters.BackBufferWidth;
-                h = gd.PresentationParameters.BackBufferHeight;
+                w = graphicsDevice.PresentationParameters.BackBufferWidth;
+                h = graphicsDevice.PresentationParameters.BackBufferHeight;
             }
             else
             {
@@ -212,15 +276,15 @@ namespace BloomEffectRenderer
                 h = renderTarget.Height;
             }
 
-            sb.Draw(t,
+            spriteBatch.Draw(texture,
                 new Rectangle(0, 0, w, h),
-                new Rectangle(0, 0, t.Width, t.Height),
+                new Rectangle(0, 0, texture.Width, texture.Height),
                 Color.White,
                 0f,
                 Vector2.Zero,
                 SpriteEffects.None,
                 1f);
-            sb.End();
+            spriteBatch.End();
         }
 
         /// <summary>
