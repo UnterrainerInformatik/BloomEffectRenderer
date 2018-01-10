@@ -1,4 +1,4 @@
-[![NuGet](https://img.shields.io/nuget/v/BloomEffectRenderer.svg?maxAge=2592000)](https://www.nuget.org/packages/BloomEffectRenderer/)
+[![NuGet](https://img.shields.io/nuget/v/BloomEffectRenderer.svg)](https://www.nuget.org/packages/BloomEffectRenderer/)
  [![license](https://img.shields.io/github/license/unterrainerinformatik/BloomEffectRenderer.svg?maxAge=2592000)](http://unlicense.org)  [![Twitter Follow](https://img.shields.io/twitter/follow/throbax.svg?style=social&label=Follow&maxAge=2592000)](https://twitter.com/throbax)  
 
 # General
