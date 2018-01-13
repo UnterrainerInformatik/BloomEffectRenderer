@@ -30,13 +30,19 @@ This project is based on the following blog posts:
 * https://digitalerr0r.wordpress.com/2009/10/04/xna-shader-programming-tutorial-23-blur-post-process/
 * https://digitalerr0r.wordpress.com/2009/10/04/xna-shader-programming-tutorial-24-bloom/
 
-Thx to the [MonoGame.Extended](https://github.com/craftworkgames/MonoGame.Extended) project for their excellent work and teaching me how to embed shaders into a DLL.
-
 You don't have to mess with shaders since those are included in the distribution.
 
 
 
-#### Example
+### Attributions
+
+Thx to the [MonoGame.Extended](https://github.com/craftworkgames/MonoGame.Extended) project for their excellent work and teaching me how to embed shaders into a DLL.
+
+Thx to [Jjagg](https://github.com/Jjagg) for reviewing the shaders.
+
+
+
+### Example
 
 ```c#
 private Point Resolution { get; } = new Point(1920, 1080);
