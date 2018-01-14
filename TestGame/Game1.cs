@@ -25,14 +25,13 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
 using System.Text;
 using BloomEffectRenderer;
-using BloomEffectRenderer.Utils;
 using InputStateManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGameDemoTools;
 
 namespace TestGame
 {
@@ -146,6 +145,7 @@ namespace TestGame
                 if (SettingIndex >= Setting.PRESET_SETTING.Length)
                     SettingIndex = 0;
             }
+
             if (Input.Key.Is.Press(Keys.OemMinus) || Input.Key.Is.Press(Keys.Subtract))
             {
                 SettingIndex--;
@@ -154,35 +154,12 @@ namespace TestGame
             }
 
             Setting s = Setting.PRESET_SETTING[SettingIndex];
-            bool m = false;
-            HandleFloatInput(Keys.Q, Keys.W, .01f, s.BloomThreshold, ref m, true);
-            HandleFloatInput(Keys.A, Keys.S, .1f, s.BlurAmount, ref m, true);
-            HandleFloatInput(Keys.Y, Keys.X, .1f, s.BloomIntensity, ref m, true);
-            HandleFloatInput(Keys.E, Keys.R, .1f, s.BloomSaturation, ref m, true);
-            HandleFloatInput(Keys.D, Keys.F, .1f, s.BaseIntensity, ref m, true);
-            HandleFloatInput(Keys.C, Keys.V, .1f, s.BaseSaturation, ref m, true);
-        }
-
-        private void HandleFloatInput(Keys down, Keys up, float step, Fader f, ref bool isModified, bool repeat = false)
-        {
-            f.Value = HandleFloatInput(down, up, step, (float) f.Value, ref isModified, repeat);
-        }
-
-        private float HandleFloatInput(Keys down, Keys up, float step, float value, ref bool isModified,
-            bool repeat = false)
-        {
-            float v = 0;
-            if (!repeat && Input.Key.Is.Press(up) || repeat && Input.Key.Is.Down(up))
-            {
-                v = step;
-                isModified = true;
-            }
-            if (!repeat && Input.Key.Is.Press(down) || repeat && Input.Key.Is.Down(down))
-            {
-                v = -step;
-                isModified = true;
-            }
-            return value + v;
+            Input.FaderInput(Keys.Q, Keys.W, .01f, s.BloomThreshold, true);
+            Input.FaderInput(Keys.A, Keys.S, .1f, s.BlurAmount, true);
+            Input.FaderInput(Keys.Y, Keys.X, .1f, s.BloomIntensity, true);
+            Input.FaderInput(Keys.E, Keys.R, .1f, s.BloomSaturation, true);
+            Input.FaderInput(Keys.D, Keys.F, .1f, s.BaseIntensity, true);
+            Input.FaderInput(Keys.C, Keys.V, .1f, s.BaseSaturation, true);
         }
 
         /// <summary>
@@ -241,7 +218,7 @@ namespace TestGame
                 spriteBatch.DrawString(Font,
                     phase + ":",
                     new Vector2(((int) phase + 1f) * Resolution.X / (int) f, 5 * (Resolution.Y / (int) f) - 10),
-                    GetLerpColor(GameTime));
+                    Demo.GetLerpColor(GameTime));
                 spriteBatch.End();
             }
         }
@@ -256,15 +233,9 @@ namespace TestGame
             }
         }
 
-        private Color GetLerpColor(GameTime gameTime)
-        {
-            var t = .5f + .5f * (float) Math.Sin(5 * gameTime.TotalGameTime.TotalSeconds);
-            return Color.Lerp(Color.White, Color.Gray, t);
-        }
-
         private void DrawText(GameTime gameTime)
         {
-            Color c = GetLerpColor(gameTime);
+            Color c = Demo.GetLerpColor(gameTime);
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             spriteBatch.DrawString(Font, BuildText(), new Vector2(10, 10), c);

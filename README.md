@@ -79,6 +79,8 @@ protected override void Draw(GameTime gameTime)
 }
 ```
 
+
+
 ### Debugging
 
 You may access any of the intermediate images produced by the renderer.

@@ -25,7 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using BloomEffectRenderer.Utils;
+using Intervals;
 using JetBrains.Annotations;
 
 namespace BloomEffectRenderer
@@ -137,8 +137,8 @@ namespace BloomEffectRenderer
         ///     base images. Zero is totally desaturated, 1.0 leaves saturation
         ///     unchanged, while higher values increase the saturation level.
         /// </param>
-        public Setting(string name, float bloomThreshold, float blurAmount, float bloomIntensity,
-            float baseIntensity, float bloomSaturation, float baseSaturation)
+        public Setting(string name, float bloomThreshold, float blurAmount, float bloomIntensity, float baseIntensity,
+            float bloomSaturation, float baseSaturation)
         {
             BaseIntensity = new Fader(0f, 3f);
             BaseSaturation = new Fader(0f, 10f);
@@ -238,26 +238,31 @@ namespace BloomEffectRenderer
                 Switch(min.BloomThreshold, max.BloomThreshold);
                 BloomThreshold.IsInverted = true;
             }
+
             if (min.BlurAmount.Value > max.BlurAmount.Value)
             {
                 Switch(min.BlurAmount, max.BlurAmount);
                 BlurAmount.IsInverted = true;
             }
+
             if (min.BloomIntensity.Value > max.BloomIntensity.Value)
             {
                 Switch(min.BloomIntensity, max.BloomIntensity);
                 BloomIntensity.IsInverted = true;
             }
+
             if (min.BaseIntensity.Value > max.BaseIntensity.Value)
             {
                 Switch(min.BaseIntensity, max.BaseIntensity);
                 BaseIntensity.IsInverted = true;
             }
+
             if (min.BloomSaturation.Value > max.BloomSaturation.Value)
             {
                 Switch(min.BloomSaturation, max.BloomSaturation);
                 BloomSaturation.IsInverted = true;
             }
+
             if (min.BaseSaturation.Value > max.BaseSaturation.Value)
             {
                 Switch(min.BaseSaturation, max.BaseSaturation);

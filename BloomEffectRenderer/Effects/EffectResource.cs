@@ -58,21 +58,17 @@ namespace BloomEffectRenderer.Effects
         private static EffectResource combineEffect;
         private static string shaderExtension;
 
-        public static EffectResource ExtractEffect
-            =>
-                extractEffect ??
-                (extractEffect =
-                    new EffectResource($"BloomEffectRenderer.Effects.Resources.BloomExtract.{shaderExtension}.mgfxo"));
-        public static EffectResource BlurEffect
-            =>
-                blurEffect ??
-                (blurEffect =
-                    new EffectResource($"BloomEffectRenderer.Effects.Resources.GaussianBlur.{shaderExtension}.mgfxo"));
-        public static EffectResource CombineEffect
-            =>
-                combineEffect ??
-                (combineEffect =
-                    new EffectResource($"BloomEffectRenderer.Effects.Resources.BloomCombine.{shaderExtension}.mgfxo"));
+        public static EffectResource ExtractEffect =>
+            extractEffect ?? (extractEffect =
+                new EffectResource($"BloomEffectRenderer.Effects.Resources.BloomExtract.{shaderExtension}.mgfxo"));
+
+        public static EffectResource BlurEffect =>
+            blurEffect ?? (blurEffect =
+                new EffectResource($"BloomEffectRenderer.Effects.Resources.GaussianBlur.{shaderExtension}.mgfxo"));
+
+        public static EffectResource CombineEffect =>
+            combineEffect ?? (combineEffect =
+                new EffectResource($"BloomEffectRenderer.Effects.Resources.BloomCombine.{shaderExtension}.mgfxo"));
 
         static EffectResource()
         {
