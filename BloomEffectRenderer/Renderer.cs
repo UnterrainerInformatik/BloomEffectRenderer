@@ -26,10 +26,10 @@
 // ***************************************************************************
 
 using System;
-using BloomEffectRenderer.Effects;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGameDemoTools;
 
 namespace BloomEffectRenderer
 {
@@ -40,6 +40,9 @@ namespace BloomEffectRenderer
         public RenderTarget2D BloomRenderTarget2 { get; private set; }
         private bool IsBloomRenderTarget1Passed { get; set; }
         private bool IsBloomRenderTarget2Passed { get; set; }
+
+        private EmbeddedEffectsManager EmbeddedEffectsManager { get; } =
+            new EmbeddedEffectsManager(typeof(Renderer), "BloomEffectRenderer.Effects.Resources");
 
         private Effect CombineEffect { get; set; }
         private Effect ExtractEffect { get; set; }
@@ -115,9 +118,9 @@ namespace BloomEffectRenderer
         /// <param name="graphicsDevice">The graphics device.</param>
         public void LoadContent(GraphicsDevice graphicsDevice)
         {
-            ExtractEffect = new Effect(graphicsDevice, EffectResource.ExtractEffect.Bytecode);
-            GaussianBlurEffect = new Effect(graphicsDevice, EffectResource.BlurEffect.Bytecode);
-            CombineEffect = new Effect(graphicsDevice, EffectResource.CombineEffect.Bytecode);
+            ExtractEffect = EmbeddedEffectsManager.Load(graphicsDevice, "BloomExtract");
+            GaussianBlurEffect = EmbeddedEffectsManager.Load(graphicsDevice, "GaussianBlur");
+            CombineEffect = EmbeddedEffectsManager.Load(graphicsDevice, "BloomCombine");
         }
 
         /// <summary>
@@ -127,13 +130,12 @@ namespace BloomEffectRenderer
         /// </summary>
         public void UnloadContent()
         {
+            EmbeddedEffectsManager.UnloadContent();
+
             if (!IsBloomRenderTarget1Passed)
                 BloomRenderTarget1?.Dispose();
             if (!IsBloomRenderTarget2Passed)
                 BloomRenderTarget2?.Dispose();
-            ExtractEffect?.Dispose();
-            GaussianBlurEffect?.Dispose();
-            CombineEffect?.Dispose();
         }
 
         /// <summary>

@@ -40,6 +40,8 @@ Thx to the [MonoGame.Extended](https://github.com/craftworkgames/MonoGame.Extend
 
 Thx to [Jjagg](https://github.com/Jjagg) for reviewing the shaders.
 
+Image by [Michael Beckwith](https://www.flickr.com/people/78207463@N04) from [Inside St Kentigerns RC Church.](https://www.flickr.com/photos/78207463@N04/8226826999/)
+
 
 
 ### Example
