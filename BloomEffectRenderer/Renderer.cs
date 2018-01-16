@@ -29,7 +29,7 @@ using System;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGameDemoTools;
+using ShaderTools;
 
 namespace BloomEffectRenderer
 {
@@ -169,16 +169,14 @@ namespace BloomEffectRenderer
             // Pass 1: draw the scene into render-target 1, using a
             // shader that extracts only the brightest parts of the image.
             ExtractEffect.Parameters["BloomThreshold"].SetValue((float) s.BloomThreshold.Value);
-            DrawFullscreenQuad(gd, sb, irt, BloomRenderTarget1, ExtractEffect);
+            sb.DrawFullscreenQuad(irt, BloomRenderTarget1, ExtractEffect);
             debugDelegate?.Invoke(name, BloomRenderTarget1, RenderPhase.EXTRACT);
 
             // Pass 2: draw from render-target 1 into render-target 2,
             // using a shader to apply a horizontal Gaussian blur filter.
             SetBlurEffectParameters(1.0f / BloomRenderTarget1.Width, 0, s);
             // The Sampler has to be on anisotropic lookup to smooth the pixels for the blur correctly.
-            DrawFullscreenQuad(gd,
-                sb,
-                BloomRenderTarget1,
+            sb.DrawFullscreenQuad(BloomRenderTarget1,
                 BloomRenderTarget2,
                 GaussianBlurEffect,
                 null,
@@ -189,9 +187,7 @@ namespace BloomEffectRenderer
             // using a shader to apply a vertical Gaussian blur filter.
             SetBlurEffectParameters(0, 1.0f / BloomRenderTarget2.Height, s);
             // The Sampler has to be on anisotropic lookup to smooth the pixels for the blur correctly.
-            DrawFullscreenQuad(gd,
-                sb,
-                BloomRenderTarget2,
+            sb.DrawFullscreenQuad(BloomRenderTarget2,
                 BloomRenderTarget1,
                 GaussianBlurEffect,
                 null,
@@ -208,87 +204,16 @@ namespace BloomEffectRenderer
             parameters["BaseSaturation"].SetValue((float) s.BaseSaturation.Value);
             parameters[5].SetValue(irt);
 
-            DrawFullscreenQuad(gd, sb, BloomRenderTarget1, ort, CombineEffect);
+            sb.DrawFullscreenQuad(BloomRenderTarget1, ort, CombineEffect);
             debugDelegate?.Invoke(name, ort, RenderPhase.COMBINE);
         }
 
         private void Clear(GraphicsDevice graphicsDevice)
         {
-            Clear(graphicsDevice, BloomRenderTarget1);
-            Clear(graphicsDevice, BloomRenderTarget2);
+            graphicsDevice.Clear(BloomRenderTarget1);
+            graphicsDevice.Clear(BloomRenderTarget2);
         }
-
-        /// <summary>
-        ///     Clears the specified <see cref="RenderTarget2D" /> with a given <see cref="Color" />.
-        /// </summary>
-        /// <param name="graphicsDevice">The <see cref="GraphicsDevice" /> to use for drawing.</param>
-        /// <param name="renderTarget">The <see cref="RenderTarget2D" /> to clear.</param>
-        /// <param name="clearColor">
-        ///     The <see cref="Color" /> to use when clearing the RenderTarget before drawing (default is
-        ///     Color.Black).
-        /// </param>
-        public static void Clear(GraphicsDevice graphicsDevice, RenderTarget2D renderTarget, Color? clearColor = null)
-        {
-            graphicsDevice.SetRenderTarget(renderTarget);
-            graphicsDevice.Clear(Color.Black);
-        }
-
-        /// <summary>
-        ///     Draws a whole, arbitrarily sized texture into a whole, arbitrarily sized renderTarget, using a custom shader to
-        ///     apply postProcessing effects.<br />
-        ///     Clears the target-rendertarget to black before drawing by default.
-        /// </summary>
-        /// <param name="graphicsDevice">The <see cref="GraphicsDevice" /> to use for drawing.</param>
-        /// <param name="spriteBatch">The <see cref="SpriteBatch" /> to use for drawing.</param>
-        /// <param name="texture">The <see cref="Texture2D" /> to draw onto the target.</param>
-        /// <param name="renderTarget">The <see cref="RenderTarget2D" /> to draw to.</param>
-        /// <param name="effect">The <see cref="Effect" /> to use when beginning the SpriteBatch (default is null -> none).</param>
-        /// <param name="blendState">The <see cref="BlendState" /> to use for drawing (default is BlendState.Opaque).</param>
-        /// <param name="samplerState">The <see cref="SamplerState" /> to use for drawing (default is SamplerState.PointClamp).</param>
-        /// <param name="clearColor">
-        ///     The <see cref="Color" /> to use when clearing the RenderTarget before drawing (default is
-        ///     Color.Black).
-        /// </param>
-        public static void DrawFullscreenQuad(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, Texture2D texture,
-            RenderTarget2D renderTarget, Effect effect = null, BlendState blendState = null,
-            SamplerState samplerState = null, Color? clearColor = null)
-        {
-            graphicsDevice.SetRenderTarget(renderTarget);
-            graphicsDevice.Clear(clearColor ?? Color.Black);
-
-            if (texture == null)
-                return;
-
-            spriteBatch.Begin(SpriteSortMode.Immediate,
-                blendState ?? BlendState.Opaque,
-                samplerState ?? SamplerState.PointClamp,
-                DepthStencilState.None,
-                RasterizerState.CullNone,
-                effect);
-
-            int w, h;
-            if (renderTarget == null)
-            {
-                w = graphicsDevice.PresentationParameters.BackBufferWidth;
-                h = graphicsDevice.PresentationParameters.BackBufferHeight;
-            }
-            else
-            {
-                w = renderTarget.Width;
-                h = renderTarget.Height;
-            }
-
-            spriteBatch.Draw(texture,
-                new Rectangle(0, 0, w, h),
-                new Rectangle(0, 0, texture.Width, texture.Height),
-                Color.White,
-                0f,
-                Vector2.Zero,
-                SpriteEffects.None,
-                1f);
-            spriteBatch.End();
-        }
-
+        
         /// <summary>
         ///     Computes sample weightings and texture coordinate offsets for one pass of a separable Gaussian blur filter.
         /// </summary>
