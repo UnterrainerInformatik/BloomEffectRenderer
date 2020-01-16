@@ -11,7 +11,7 @@ In order to get help with basic GIT commands you may try [the GIT cheat-sheet][c
 This repository located on our  [homepage][homepage] is private since this is the master- and release-branch. You may clone it, but it will be read-only.  
 If you want to contribute to our repository (push, open pull requests), please use the copy on github located here: [the public github repository][github]  
 
-# ![Icon](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/icon.png) BloomEffectRenderer
+# ![Icon](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/BloomEffectRenderer/icon.png) BloomEffectRenderer
 
 This class is a PCL library for MonoGame that implements a bloom effect.  
 If you'd like your game to truly shine, you can use this little beauty without much hassle.  
@@ -141,13 +141,13 @@ A test-project is included. You can manipulate the values of the shaders directl
 
 Here are a few screenshots:
 
-![Bloom Off](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/bloom_off.png)
+![Bloom Off](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/docs/bloom_off.png)
 
- ![Bloom 1](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/bloom_1.png)
+ ![Bloom 1](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/docs/bloom_1.png)
 
-![Bloom 2](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/bloom_2.png)
+![Bloom 2](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/docs/bloom_2.png)
 
- ![Bloom 3](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/bloom_3.png)
+ ![Bloom 3](https://github.com/UnterrainerInformatik/BloomEffectRenderer/raw/master/docs/bloom_3.png)
 
   
 
