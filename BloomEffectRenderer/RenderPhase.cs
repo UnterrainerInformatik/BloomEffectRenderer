@@ -25,11 +25,8 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
-
 namespace BloomEffectRenderer
 {
-    [PublicAPI]
     public enum RenderPhase
     {
         /// <summary>

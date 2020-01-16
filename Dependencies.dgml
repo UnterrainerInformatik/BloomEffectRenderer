@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="BloomEffectRenderer" Category="Project" />
+    <Node Id="TestGame" Category="Project" />
+    <Node Id="Faders 1.1.0" Category="Package" />
+    <Node Id="InputStateManager 1.1.0.2" Category="Package" />
+    <Node Id="JetBrains.Annotations 11.1.0" Category="Package" />
+    <Node Id="MonoGame.Framework.Portable 3.6.0.1625" Category="Package" />
+    <Node Id="NUnit 3.6.1" Category="Package" />
+    <Node Id="ShaderTools 1.0.1.1" Category="Package" />
+    <Node Id="System.Runtime 4.3.0" Category="Package" />
+    <Node Id="MonoGame.Framework.DesktopGL 3.6.0.1625" Category="Package" />
+    <Node Id="MonoGameDemoTools 1.1.0.6" Category="Package" />
+    <Node Id="Faders" Label="Faders" Group="Expanded" Category="PackageGroup" />
+    <Node Id="InputStateManager" Label="InputStateManager" Group="Expanded" Category="PackageGroup" />
+    <Node Id="JetBrains.Annotations" Label="JetBrains.Annotations" Group="Expanded" Category="PackageGroup" />
+    <Node Id="MonoGame.Framework.Portable" Label="MonoGame.Framework.Portable" Group="Expanded" Category="PackageGroup" />
+    <Node Id="NUnit" Label="NUnit" Group="Expanded" Category="PackageGroup" />
+    <Node Id="ShaderTools" Label="ShaderTools" Group="Expanded" Category="PackageGroup" />
+    <Node Id="System.Runtime" Label="System.Runtime" Group="Expanded" Category="PackageGroup" />
+    <Node Id="MonoGame.Framework.DesktopGL" Label="MonoGame.Framework.DesktopGL" Group="Expanded" Category="PackageGroup" />
+    <Node Id="MonoGameDemoTools" Label="MonoGameDemoTools" Group="Expanded" Category="PackageGroup" />
+    <Node Id="GlobalAssemblyCache" Label="Global Assembly Cache" Group="Collapsed" Category="GAC Library" />
+    <Node Id="LocalLibraries" Label="Local Libraries" Group="Expanded" Category="Libraries" />
+    <Node Id="System" Category="GAC Library" />
+    <Node Id="System.ComponentModel.Composition" Category="GAC Library" />
+    <Node Id="System.Xml" Category="GAC Library" />
+    <Node Id="BloomEffectRenderer" Label="BloomEffectRenderer" Group="Expanded" Category="Solution" />
+  </Nodes>
+  <Links>
+    <Link Source="Faders" Target="Faders 1.1.0" Category="Contains" />
+    <Link Source="InputStateManager" Target="InputStateManager 1.1.0.2" Category="Contains" />
+    <Link Source="JetBrains.Annotations" Target="JetBrains.Annotations 11.1.0" Category="Contains" />
+    <Link Source="MonoGame.Framework.Portable" Target="MonoGame.Framework.Portable 3.6.0.1625" Category="Contains" />
+    <Link Source="NUnit" Target="NUnit 3.6.1" Category="Contains" />
+    <Link Source="ShaderTools" Target="ShaderTools 1.0.1.1" Category="Contains" />
+    <Link Source="System.Runtime" Target="System.Runtime 4.3.0" Category="Contains" />
+    <Link Source="MonoGame.Framework.DesktopGL" Target="MonoGame.Framework.DesktopGL 3.6.0.1625" Category="Contains" />
+    <Link Source="MonoGameDemoTools" Target="MonoGameDemoTools 1.1.0.6" Category="Contains" />
+    <Link Source="GlobalAssemblyCache" Target="System" Category="Contains" />
+    <Link Source="GlobalAssemblyCache" Target="System.ComponentModel.Composition" Category="Contains" />
+    <Link Source="GlobalAssemblyCache" Target="System.Xml" Category="Contains" />
+    <Link Source="BloomEffectRenderer" Target="BloomEffectRenderer" Category="Contains" />
+    <Link Source="BloomEffectRenderer" Target="Faders 1.1.0" Category="Installed Package" />
+    <Link Source="BloomEffectRenderer" Target="InputStateManager 1.1.0.2" Category="Installed Package" />
+    <Link Source="BloomEffectRenderer" Target="JetBrains.Annotations 11.1.0" Category="Installed Package" />
+    <Link Source="BloomEffectRenderer" Target="MonoGame.Framework.Portable 3.6.0.1625" Category="Installed Package" />
+    <Link Source="BloomEffectRenderer" Target="NUnit 3.6.1" Category="Installed Package" />
+    <Link Source="BloomEffectRenderer" Target="ShaderTools 1.0.1.1" Category="Installed Package" />
+    <Link Source="BloomEffectRenderer" Target="System.Runtime 4.3.0" Category="Installed Package" />
+    <Link Source="BloomEffectRenderer" Target="TestGame" Category="Contains" />
+    <Link Source="TestGame" Target="BloomEffectRenderer" Category="Project Reference" />
+    <Link Source="TestGame" Target="Faders 1.1.0" Category="Installed Package" />
+    <Link Source="TestGame" Target="InputStateManager 1.1.0.2" Category="Installed Package" />
+    <Link Source="TestGame" Target="JetBrains.Annotations 11.1.0" Category="Installed Package" />
+    <Link Source="TestGame" Target="MonoGame.Framework.DesktopGL 3.6.0.1625" Category="Installed Package" />
+    <Link Source="TestGame" Target="MonoGame.Framework.Portable 3.6.0.1625" Category="Installed Package" />
+    <Link Source="TestGame" Target="MonoGameDemoTools 1.1.0.6" Category="Installed Package" />
+    <Link Source="TestGame" Target="NUnit 3.6.1" Category="Installed Package" />
+    <Link Source="TestGame" Target="System.Runtime 4.3.0" Category="Installed Package" />
+    <Link Source="TestGame" Target="System" Category="Library Reference" />
+    <Link Source="TestGame" Target="System.ComponentModel.Composition" Category="Library Reference" />
+    <Link Source="TestGame" Target="System.Xml" Category="Library Reference" />
+  </Links>
+  <Styles>
+    <Style TargetType="Node" GroupLabel="Project" ValueLabel="True">
+      <Condition Expression="HasCategory('Project')" />
+      <Setter Property="Background" Value="Blue" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Package" ValueLabel="True">
+      <Condition Expression="HasCategory('Package')" />
+      <Setter Property="Background" Value="Purple" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="PackageGroup" ValueLabel="True">
+      <Condition Expression="HasCategory('PackageGroup')" />
+      <Setter Property="Background" Value="Plum" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Library" ValueLabel="True">
+      <Condition Expression="HasCategory('Library')" />
+      <Setter Property="Background" Value="Green" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="GAC Library" ValueLabel="True">
+      <Condition Expression="HasCategory('GAC Library')" />
+      <Setter Property="Background" Value="LightGreen" />
+    </Style>
+  </Styles>
+</DirectedGraph>
