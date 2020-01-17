@@ -118,6 +118,7 @@
     <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="Content\AnonymousPro8.spritefont" />
+    <None Include="Content\Anonymous_Pro.ttf" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
