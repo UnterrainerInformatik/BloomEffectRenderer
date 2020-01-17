@@ -26,14 +26,12 @@
 // ***************************************************************************
 
 using System;
-using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ShaderTools;
 
 namespace BloomEffectRenderer
 {
-    [PublicAPI]
     public class Renderer
     {
         public RenderTarget2D BloomRenderTarget1 { get; private set; }

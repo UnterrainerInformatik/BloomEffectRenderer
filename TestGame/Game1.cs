@@ -125,7 +125,7 @@ namespace TestGame
         protected override void Update(GameTime gameTime)
         {
             Input.Update();
-            if (Input.Pad.Is.Press(Buttons.Back) || Input.Key.Is.Press(Keys.Escape))
+            if (Input.Pad().Is.Press(Buttons.Back) || Input.Key.Is.Press(Keys.Escape))
                 Exit();
 
             HandleInput();

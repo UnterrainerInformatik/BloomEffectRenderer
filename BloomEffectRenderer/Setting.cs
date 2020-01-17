@@ -25,15 +25,13 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using Intervals;
-using JetBrains.Annotations;
+using Faders;
 
 namespace BloomEffectRenderer
 {
     /// <summary>
     ///     Class holds all the settings used to tweak the bloom effect.
     /// </summary>
-    [PublicAPI]
     public class Setting
     {
         /// <summary>

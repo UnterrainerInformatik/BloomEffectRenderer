@@ -42,6 +42,7 @@
     <EmbeddedResource Include="Effects\Resources\GaussianBlur.dx11.mgfxo" />
     <EmbeddedResource Include="Effects\Resources\GaussianBlur.ogl.mgfxo" />
     <None Include="app.config" />
+    <None Include="BloomEffectRenderer.nuspec" />
     <None Include="Effects\Resources\RebuildEffects.bat" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -53,35 +54,23 @@
     <Compile Include="RenderPhase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Faders, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Faders.1.1.0\lib\portable45-net45+win8+wpa81\Faders.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Faders, Version=1.1.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Faders.1.1.1.1\lib\portable45-net45+win8+wpa81\Faders.dll</HintPath>
     </Reference>
-    <Reference Include="InputStateManager, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\InputStateManager.1.1.0.2\lib\portable45-net45+win8+wpa81\InputStateManager.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="MonoGame.Framework, Version=3.7.1.189, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.Portable.3.7.1.189\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\portable40-net40+sl5+win8+wp8+wpa81\JetBrains.Annotations.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Framework.Portable.3.6.0.1625\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="nunit.framework, Version=3.6.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.3.6.1\lib\portable-net45+win8+wp8+wpa81\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ShaderTools, Version=1.0.1.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ShaderTools.1.0.1.1\lib\portable45-net45+win8+wpa81\ShaderTools.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="ShaderTools, Version=1.0.2.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ShaderTools.1.0.2.1\lib\portable45-net45+win8+wpa81\ShaderTools.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Effects\Resources\BloomCombine.fx" />
-    <Content Include="Effects\Resources\BloomExtract.fx" />
-    <Content Include="Effects\Resources\GaussianBlur.fx" />
+    <None Include="Effects\Resources\BloomCombine.fx" />
+    <None Include="Effects\Resources\BloomExtract.fx" />
+    <None Include="Effects\Resources\GaussianBlur.fx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
