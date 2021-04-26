@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - develop
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,5 +13,6 @@ jobs:
       uses: anothrNick/github-tag-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        RELEASE_BRANCHES: master
         DEFAULT_BUMP: patch
         WITH_V: false
